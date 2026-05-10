@@ -1,214 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function App() {
-  const [lbs, setLbs] = useState('');
-  const [kg, setKg] = useState('');
+  const [lbs, setLbs] = useState("");
+  const [kg, setKg] = useState("");
 
-  const [weight, setWeight] = useState('');
-  const [reps, setReps] = useState('');
-  const [oneRM, setOneRM] = useState(null);
-
-  const [maxInput, setMaxInput] = useState('');
-  const [targetReps, setTargetReps] = useState('');
-  const [workingWeight, setWorkingWeight] = useState(null);
-
-  const [rampWeight, setRampWeight] = useState('');
-  const [rampSets, setRampSets] = useState([]);
-
-  function convertWeight() {
+  function convertToKg() {
     if (!lbs) return;
+
     const result = (parseFloat(lbs) * 0.453592).toFixed(1);
     setKg(result);
   }
 
-  function calculate1RM() {
-    if (!weight || !reps) return;
-
-    const result = parseFloat(weight) * (1 + parseFloat(reps) / 30);
-
-    setOneRM({
-      lbs: result.toFixed(1),
-      kg: (result * 0.453592).toFixed(1),
-    });
-  }
-
-  function calculateWorkingWeight() {
-    if (!maxInput || !targetReps) return;
-
-    const result = parseFloat(maxInput) / (1 + parseFloat(targetReps) / 30);
-
-    setWorkingWeight({
-      lbs: result.toFixed(1),
-      kg: (result * 0.453592).toFixed(1),
-    });
-  }
-
-  function generateRampSets() {
-    if (!rampWeight) return;
-
-    const working = parseFloat(rampWeight);
-
-    const sets = [
-      { label: 'Warm-Up 1', percent: 0.45, reps: '5' },
-      { label: 'Warm-Up 2', percent: 0.65, reps: '3' },
-      { label: 'Warm-Up 3', percent: 0.82, reps: '1-2' },
-    ].map((set) => {
-      const lbsValue = Math.round((working * set.percent) / 5) * 5;
-
-      return {
-        ...set,
-        lbs: lbsValue,
-        kg: (lbsValue * 0.453592).toFixed(1),
-      };
-    });
-
-    setRampSets(sets);
-  }
-
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold mb-2">Lifting Calculator</h1>
-          <p className="text-zinc-400">
-            Pounds to Kilograms • 1RM • Ramp-Up Sets
-          </p>
-        </div>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+      <div className="bg-zinc-900 p-8 rounded-3xl w-full max-w-md shadow-2xl">
+        
+        <h1 className="text-3xl font-bold text-center mb-6">
+          LBS to KG Converter
+        </h1>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card title="LBS to KG">
-            <Input
-              placeholder="Enter pounds"
-              value={lbs}
-              onChange={setLbs}
-            />
+        <input
+          type="number"
+          placeholder="Enter weight in lbs"
+          value={lbs}
+          onChange={(e) => setLbs(e.target.value)}
+          className="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4 outline-none"
+        />
 
-            <Button onClick={convertWeight}>Convert</Button>
+        <button
+          onClick={convertToKg}
+          className="w-full bg-white text-black font-bold p-4 rounded-2xl hover:opacity-90 transition"
+        >
+          Convert
+        </button>
 
-            {kg && <Result primary={`${kg} kg`} secondary={`${lbs} lbs`} />}
-          </Card>
-
-          <Card title="1 Rep Max Calculator">
-            <Input
-              placeholder="Weight lifted"
-              value={weight}
-              onChange={setWeight}
-            />
-
-            <Input
-              placeholder="Reps completed"
-              value={reps}
-              onChange={setReps}
-            />
-
-            <Button onClick={calculate1RM}>Calculate</Button>
-
-            {oneRM && (
-              <Result
-                primary={`${oneRM.lbs} lbs`}
-                secondary={`${oneRM.kg} kg`}
-              />
-            )}
-          </Card>
-
-          <Card title="Working Weight From 1RM">
-            <Input
-              placeholder="Your 1RM"
-              value={maxInput}
-              onChange={setMaxInput}
-            />
-
-            <Input
-              placeholder="Target reps"
-              value={targetReps}
-              onChange={setTargetReps}
-            />
-
-            <Button onClick={calculateWorkingWeight}>Calculate</Button>
-
-            {workingWeight && (
-              <Result
-                primary={`${workingWeight.lbs} lbs`}
-                secondary={`${workingWeight.kg} kg`}
-              />
-            )}
-          </Card>
-
-          <Card title="Ramp-Up Set Generator">
-            <Input
-              placeholder="Working weight"
-              value={rampWeight}
-              onChange={setRampWeight}
-            />
-
-            <Button onClick={generateRampSets}>Generate</Button>
-
-            <div className="space-y-3 mt-4">
-              {rampSets.map((set, index) => (
-                <div
-                  key={index}
-                  className="bg-zinc-800 rounded-2xl p-4 flex justify-between"
-                >
-                  <div>
-                    <div className="font-semibold">{set.label}</div>
-                    <div className="text-zinc-400 text-sm">
-                      {set.reps} reps
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="font-bold">{set.lbs} lbs</div>
-                    <div className="text-zinc-400 text-sm">
-                      {set.kg} kg
-                    </div>
-                  </div>
-                </div>
-              ))}
+        {kg && (
+          <div className="mt-6 bg-zinc-800 p-5 rounded-2xl text-center">
+            <div className="text-zinc-400 text-sm mb-1">
+              Converted Weight
             </div>
-          </Card>
-        </div>
+
+            <div className="text-4xl font-bold">
+              {kg} kg
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  );
-}
-
-function Card({ title, children }) {
-  return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
-      <h2 className="text-2xl font-bold mb-5">{title}</h2>
-      <div className="space-y-4">{children}</div>
-    </div>
-  );
-}
-
-function Input({ placeholder, value, onChange }) {
-  return (
-    <input
-      type="number"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg outline-none"
-    />
-  );
-}
-
-function Button({ children, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full bg-white text-black rounded-2xl p-4 font-bold hover:opacity-90 transition"
-    >
-      {children}
-    </button>
-  );
-}
-
-function Result({ primary, secondary }) {
-  return (
-    <div className="bg-zinc-800 rounded-2xl p-5 text-center">
-      <div className="text-3xl font-bold">{primary}</div>
-      <div className="text-zinc-400 mt-1">{secondary}</div>
     </div>
   );
 }
