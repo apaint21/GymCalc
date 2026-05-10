@@ -1,51 +1,73 @@
-import React, { useState } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-export default function App() {
-  const [lbs, setLbs] = useState("");
-  const [kg, setKg] = useState("");
+  <title>LBS to KG Converter</title>
 
-  function convertToKg() {
-    if (!lbs) return;
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    const result = (parseFloat(lbs) * 0.453592).toFixed(1);
-    setKg(result);
-  }
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
 
-  return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-      <div className="bg-zinc-900 p-8 rounded-3xl w-full max-w-md shadow-2xl">
-        
-        <h1 className="text-3xl font-bold text-center mb-6">
-          LBS to KG Converter
-        </h1>
+<body class="bg-black text-white flex items-center justify-center min-h-screen">
 
-        <input
-          type="number"
-          placeholder="Enter weight in lbs"
-          value={lbs}
-          onChange={(e) => setLbs(e.target.value)}
-          className="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4 outline-none"
-        />
+  <div class="bg-zinc-900 p-8 rounded-3xl w-full max-w-md shadow-2xl">
 
-        <button
-          onClick={convertToKg}
-          className="w-full bg-white text-black font-bold p-4 rounded-2xl hover:opacity-90 transition"
-        >
-          Convert
-        </button>
+    <h1 class="text-3xl font-bold text-center mb-6">
+      LBS to KG Converter
+    </h1>
 
-        {kg && (
-          <div className="mt-6 bg-zinc-800 p-5 rounded-2xl text-center">
-            <div className="text-zinc-400 text-sm mb-1">
-              Converted Weight
-            </div>
+    <input
+      id="lbsInput"
+      type="number"
+      placeholder="Enter weight in lbs"
+      class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4 outline-none"
+    />
 
-            <div className="text-4xl font-bold">
-              {kg} kg
-            </div>
-          </div>
-        )}
+    <button
+      onclick="convertToKg()"
+      class="w-full bg-white text-black font-bold p-4 rounded-2xl hover:opacity-90 transition"
+    >
+      Convert
+    </button>
+
+    <div
+      id="result"
+      class="mt-6 bg-zinc-800 p-5 rounded-2xl text-center hidden"
+    >
+      <div class="text-zinc-400 text-sm mb-1">
+        Converted Weight
+      </div>
+
+      <div
+        id="kgOutput"
+        class="text-4xl font-bold"
+      >
       </div>
     </div>
-  );
-}
+
+  </div>
+
+  <script>
+    function convertToKg() {
+      const lbs = document.getElementById("lbsInput").value;
+
+      if (!lbs) return;
+
+      const kg = (parseFloat(lbs) * 0.453592).toFixed(1);
+
+      document.getElementById("kgOutput").innerText = `${kg} kg`;
+
+      document.getElementById("result").classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>
