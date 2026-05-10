@@ -18,7 +18,7 @@
 
 <body class="bg-black text-white min-h-screen p-6">
 
-  <div class="max-w-5xl mx-auto">
+  <div class="max-w-6xl mx-auto">
 
     <h1 class="text-5xl font-bold text-center mb-10">
       Lifting Calculator
@@ -177,6 +177,34 @@
 
       </div>
 
+      <!-- 1RM REP CHART -->
+      <div class="bg-zinc-900 p-6 rounded-3xl md:col-span-2">
+
+        <h2 class="text-2xl font-bold mb-5">
+          1RM Rep Chart
+        </h2>
+
+        <input
+          id="repChartInput"
+          type="number"
+          placeholder="Enter your 1RM"
+          class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4"
+        >
+
+        <button
+          onclick="generateRepChart()"
+          class="w-full bg-white text-black font-bold p-4 rounded-2xl"
+        >
+          Generate Chart
+        </button>
+
+        <div
+          id="repChartResults"
+          class="hidden mt-5 grid md:grid-cols-2 gap-3"
+        ></div>
+
+      </div>
+
     </div>
 
   </div>
@@ -211,7 +239,7 @@
       document.getElementById("lbsResult").classList.remove("hidden");
     }
 
-    // 1RM
+    // 1RM CALCULATOR
     function calculate1RM() {
 
       const weight = document.getElementById("weightInput").value;
@@ -295,6 +323,71 @@
       document.getElementById("rampResults").innerHTML = html;
 
       document.getElementById("rampResults").classList.remove("hidden");
+    }
+
+    // 1RM REP CHART
+    function generateRepChart() {
+
+      const oneRM =
+        parseFloat(document.getElementById("repChartInput").value);
+
+      if (!oneRM) return;
+
+      const repPercentages = [
+        { reps: 1, percent: 1.00 },
+        { reps: 2, percent: 0.95 },
+        { reps: 3, percent: 0.93 },
+        { reps: 4, percent: 0.90 },
+        { reps: 5, percent: 0.87 },
+        { reps: 6, percent: 0.85 },
+        { reps: 7, percent: 0.83 },
+        { reps: 8, percent: 0.80 },
+        { reps: 9, percent: 0.77 },
+        { reps: 10, percent: 0.75 },
+        { reps: 11, percent: 0.73 },
+        { reps: 12, percent: 0.70 },
+        { reps: 15, percent: 0.65 },
+        { reps: 20, percent: 0.60 },
+        { reps: 25, percent: 0.55 },
+        { reps: 30, percent: 0.50 }
+      ];
+
+      let html = "";
+
+      repPercentages.forEach(item => {
+
+        const lbs =
+          Math.round((oneRM * item.percent) / 5) * 5;
+
+        const kg =
+          (lbs * 0.453592).toFixed(1);
+
+        html += `
+          <div class="bg-zinc-800 p-4 rounded-2xl flex justify-between">
+
+            <div>
+              <div class="font-bold">
+                ${item.reps} Reps
+              </div>
+            </div>
+
+            <div class="text-right">
+              <div class="font-bold">
+                ${lbs} lbs
+              </div>
+
+              <div class="text-zinc-400 text-sm">
+                ${kg} kg
+              </div>
+            </div>
+
+          </div>
+        `;
+      });
+
+      document.getElementById("repChartResults").innerHTML = html;
+
+      document.getElementById("repChartResults").classList.remove("hidden");
     }
 
   </script>
