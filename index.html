@@ -1,259 +1,247 @@
-import React from "react"
+import React, { useState } from "react"
 
 export default function LiftingCalculatorApp() {
-  const [lbs, setLbs] = React.useState("")
-  const [kg, setKg] = React.useState("")
-  const [weight, setWeight] = React.useState("")
-  const [reps, setReps] = React.useState("")
-  const [oneRM, setOneRM] = React.useState("")
-  const [targetReps, setTargetReps] = React.useState("")
-  const [calculatedWeight, setCalculatedWeight] = React.useState(null)
-  const [rampWeight, setRampWeight] = React.useState("")
-  const [rampSets, setRampSets] = React.useState([])
+  const [lbs, setLbs] = useState("")
+  const [kgResult, setKgResult] = useState("")
+
+  const [weight, setWeight] = useState("")
+  const [reps, setReps] = useState("")
+  const [oneRMResult, setOneRMResult] = useState(null)
+
+  const [oneRMInput, setOneRMInput] = useState("")
+  const [targetReps, setTargetReps] = useState("")
+  const [workingWeightResult, setWorkingWeightResult] = useState(null)
+
+  const [rampWeight, setRampWeight] = useState("")
+  const [rampSets, setRampSets] = useState([])
 
   const convertToKg = () => {
     if (!lbs) return
-    const result = (parseFloat(lbs) * 0.453592).toFixed(2)
-    setKg(result)
+
+    const kg = (parseFloat(lbs) * 0.453592).toFixed(1)
+    setKgResult(kg)
   }
 
   const calculateOneRM = () => {
     if (!weight || !reps) return
 
-    // Epley Formula
     const result = parseFloat(weight) * (1 + parseFloat(reps) / 30)
-    setOneRM(result.toFixed(1))
+
+    setOneRMResult({
+      lbs: result.toFixed(1),
+      kg: (result * 0.453592).toFixed(1),
+    })
   }
 
-  const calculateWeightFrom1RM = () => {
-    if (!oneRM || !targetReps) return
+  const calculateWorkingWeight = () => {
+    if (!oneRMInput || !targetReps) return
 
-    // Reverse Epley Formula
-    const result = parseFloat(oneRM) / (1 + parseFloat(targetReps) / 30)
-    setCalculatedWeight(result.toFixed(1))
+    const result = parseFloat(oneRMInput) / (1 + parseFloat(targetReps) / 30)
+
+    setWorkingWeightResult({
+      lbs: result.toFixed(1),
+      kg: (result * 0.453592).toFixed(1),
+    })
   }
 
   const calculateRampSets = () => {
     if (!rampWeight) return
 
-    const workingWeight = parseFloat(rampWeight)
+    const working = parseFloat(rampWeight)
 
-    const sets = [
+    const generatedSets = [
       {
         label: "Warm-Up 1",
         lbs: 45,
         kg: (45 * 0.453592).toFixed(1),
-        reps: "10"
+        reps: "10",
       },
       {
         label: "Warm-Up 2",
-        lbs: Math.round(workingWeight * 0.45 / 5) * 5,
-        kg: ((Math.round(workingWeight * 0.45 / 5) * 5) * 0.453592).toFixed(1),
-        reps: "5"
+        lbs: Math.round((working * 0.45) / 5) * 5,
+        reps: "5",
       },
       {
         label: "Warm-Up 3",
-        lbs: Math.round(workingWeight * 0.65 / 5) * 5,
-        kg: ((Math.round(workingWeight * 0.65 / 5) * 5) * 0.453592).toFixed(1),
-        reps: "3"
+        lbs: Math.round((working * 0.65) / 5) * 5,
+        reps: "3",
       },
       {
         label: "Warm-Up 4",
-        lbs: Math.round(workingWeight * 0.82 / 5) * 5,
-        kg: ((Math.round(workingWeight * 0.82 / 5) * 5) * 0.453592).toFixed(1),
-        reps: "1–2"
-      }
-    ]
+        lbs: Math.round((working * 0.82) / 5) * 5,
+        reps: "1–2",
+      },
+    ].map((set) => ({
+      ...set,
+      kg: (set.lbs * 0.453592).toFixed(1),
+    }))
 
-    setRampSets(sets)
+    setRampSets(generatedSets)
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-6 flex items-center justify-center">
-      <div className="w-full max-w-4xl space-y-6">
-
-        <div className="text-center mb-6">
-          <h1 className="text-5xl font-bold tracking-tight">
-            Lifting Calculator
-          </h1>
-          <p className="text-zinc-400 mt-2 text-lg">
-            Pounds ↔ Kilograms • 1RM • Ramp-Up Sets
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-10 text-center">
+          <h1 className="text-5xl font-bold mb-3">Lifting Calculator</h1>
+          <p className="text-zinc-400 text-lg">
+            Weight Conversion • 1RM • Ramp-Up Sets
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-
-          <div className="bg-zinc-900 rounded-3xl p-6 shadow-2xl border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-5">
-              Weight Converter
-            </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <h2 className="text-2xl font-bold mb-5">LBS → KG</h2>
 
             <div className="space-y-4">
               <input
                 type="number"
-                placeholder="Weight in lbs"
                 value={lbs}
                 onChange={(e) => setLbs(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg"
+                placeholder="Enter weight in lbs"
+                className="w-full rounded-2xl bg-zinc-800 border border-zinc-700 p-4 text-lg"
               />
 
               <button
                 onClick={convertToKg}
-                className="w-full bg-white text-black rounded-2xl p-4 font-semibold text-lg hover:opacity-90 transition"
+                className="w-full rounded-2xl bg-white text-black font-bold p-4"
               >
                 Convert
               </button>
 
-              {kg && (
-                <div className="bg-zinc-800 rounded-2xl p-4 text-xl font-semibold text-center">
-                  {lbs} lbs = {kg} kg
+              {kgResult && (
+                <div className="rounded-2xl bg-zinc-800 p-5 text-center">
+                  <div className="text-3xl font-bold">{kgResult} kg</div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="bg-zinc-900 rounded-3xl p-6 shadow-2xl border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-5">
-              1 Rep Max
-            </h2>
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <h2 className="text-2xl font-bold mb-5">1 Rep Max</h2>
 
             <div className="space-y-4">
               <input
                 type="number"
-                placeholder="Weight lifted"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg"
+                placeholder="Weight lifted"
+                className="w-full rounded-2xl bg-zinc-800 border border-zinc-700 p-4 text-lg"
               />
 
               <input
                 type="number"
-                placeholder="Reps completed"
                 value={reps}
                 onChange={(e) => setReps(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg"
+                placeholder="Reps completed"
+                className="w-full rounded-2xl bg-zinc-800 border border-zinc-700 p-4 text-lg"
               />
 
               <button
                 onClick={calculateOneRM}
-                className="w-full bg-white text-black rounded-2xl p-4 font-semibold text-lg hover:opacity-90 transition"
+                className="w-full rounded-2xl bg-white text-black font-bold p-4"
               >
-                Calculate 1RM
+                Calculate
               </button>
 
-              {oneRM && (
-                <div className="bg-zinc-800 rounded-2xl p-4 text-center">
-                  <div className="text-zinc-400 text-sm mb-1">
-                    Estimated Max
+              {oneRMResult && (
+                <div className="rounded-2xl bg-zinc-800 p-5 text-center">
+                  <div className="text-3xl font-bold">
+                    {oneRMResult.lbs} lbs
                   </div>
-                  <div className="text-2xl font-bold">
-                    {oneRM} lbs
-                  </div>
-                  <div className="text-zinc-400">
-                    {(oneRM * 0.453592).toFixed(1)} kg
+                  <div className="text-zinc-400 mt-1">
+                    {oneRMResult.kg} kg
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="bg-zinc-900 rounded-3xl p-6 shadow-2xl border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-5">
-              Working Weight
-            </h2>
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <h2 className="text-2xl font-bold mb-5">Working Weight</h2>
 
             <div className="space-y-4">
               <input
                 type="number"
-                placeholder="Your 1RM"
-                value={oneRM}
-                onChange={(e) => setOneRM(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg"
+                value={oneRMInput}
+                onChange={(e) => setOneRMInput(e.target.value)}
+                placeholder="Enter 1RM"
+                className="w-full rounded-2xl bg-zinc-800 border border-zinc-700 p-4 text-lg"
               />
 
               <input
                 type="number"
-                placeholder="Target reps"
                 value={targetReps}
                 onChange={(e) => setTargetReps(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg"
+                placeholder="Target reps"
+                className="w-full rounded-2xl bg-zinc-800 border border-zinc-700 p-4 text-lg"
               />
 
               <button
-                onClick={calculateWeightFrom1RM}
-                className="w-full bg-white text-black rounded-2xl p-4 font-semibold text-lg hover:opacity-90 transition"
+                onClick={calculateWorkingWeight}
+                className="w-full rounded-2xl bg-white text-black font-bold p-4"
               >
-                Calculate Weight
+                Calculate
               </button>
 
-              {calculatedWeight && (
-                <div className="bg-zinc-800 rounded-2xl p-4 text-center">
-                  <div className="text-zinc-400 text-sm mb-1">
-                    Estimated Working Weight
+              {workingWeightResult && (
+                <div className="rounded-2xl bg-zinc-800 p-5 text-center">
+                  <div className="text-3xl font-bold">
+                    {workingWeightResult.lbs} lbs
                   </div>
-                  <div className="text-2xl font-bold">
-                    {calculatedWeight} lbs
-                  </div>
-                  <div className="text-zinc-400">
-                    {(calculatedWeight * 0.453592).toFixed(1)} kg
+                  <div className="text-zinc-400 mt-1">
+                    {workingWeightResult.kg} kg
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="bg-zinc-900 rounded-3xl p-6 shadow-2xl border border-zinc-800">
-            <h2 className="text-2xl font-bold mb-5">
-              Ramp-Up Sets
-            </h2>
+          <div className="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+            <h2 className="text-2xl font-bold mb-5">Ramp-Up Sets</h2>
 
             <div className="space-y-4">
               <input
                 type="number"
-                placeholder="Working weight"
                 value={rampWeight}
                 onChange={(e) => setRampWeight(e.target.value)}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-2xl p-4 text-lg"
+                placeholder="Working weight"
+                className="w-full rounded-2xl bg-zinc-800 border border-zinc-700 p-4 text-lg"
               />
 
               <button
                 onClick={calculateRampSets}
-                className="w-full bg-white text-black rounded-2xl p-4 font-semibold text-lg hover:opacity-90 transition"
+                className="w-full rounded-2xl bg-white text-black font-bold p-4"
               >
-                Generate Sets
+                Generate
               </button>
 
-              {rampSets.length > 0 && (
-                <div className="space-y-3">
-                  {rampSets.map((set, index) => (
-                    <div
-                      key={index}
-                      className="bg-zinc-800 rounded-2xl p-4 flex justify-between items-center"
-                    >
-                      <div>
-                        <div className="font-semibold">
-                          {set.label}
-                        </div>
-                        <div className="text-zinc-400 text-sm">
-                          {set.reps} reps
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <div className="font-bold text-lg">
-                          {set.lbs} lbs
-                        </div>
-                        <div className="text-zinc-400 text-sm">
-                          {set.kg} kg
-                        </div>
+              <div className="space-y-3">
+                {rampSets.map((set, index) => (
+                  <div
+                    key={index}
+                    className="bg-zinc-800 rounded-2xl p-4 flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="font-semibold">{set.label}</div>
+                      <div className="text-zinc-400 text-sm">
+                        {set.reps} reps
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    <div className="text-right">
+                      <div className="font-bold text-lg">
+                        {set.lbs} lbs
+                      </div>
+                      <div className="text-zinc-400 text-sm">
+                        {set.kg} kg
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
