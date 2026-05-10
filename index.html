@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>LBS to KG Converter</title>
+  <title>Lifting Calculator</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -16,47 +16,176 @@
   </style>
 </head>
 
-<body class="bg-black text-white flex items-center justify-center min-h-screen">
+<body class="bg-black text-white min-h-screen p-6">
 
-  <div class="bg-zinc-900 p-8 rounded-3xl w-full max-w-md shadow-2xl">
+  <div class="max-w-5xl mx-auto">
 
-    <h1 class="text-3xl font-bold text-center mb-6">
-      LBS to KG Converter
+    <h1 class="text-5xl font-bold text-center mb-10">
+      Lifting Calculator
     </h1>
 
-    <input
-      id="lbsInput"
-      type="number"
-      placeholder="Enter weight in lbs"
-      class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4 outline-none"
-    />
+    <div class="grid md:grid-cols-2 gap-6">
 
-    <button
-      onclick="convertToKg()"
-      class="w-full bg-white text-black font-bold p-4 rounded-2xl hover:opacity-90 transition"
-    >
-      Convert
-    </button>
+      <!-- LBS TO KG -->
+      <div class="bg-zinc-900 p-6 rounded-3xl">
 
-    <div
-      id="result"
-      class="mt-6 bg-zinc-800 p-5 rounded-2xl text-center hidden"
-    >
-      <div class="text-zinc-400 text-sm mb-1">
-        Converted Weight
+        <h2 class="text-2xl font-bold mb-5">
+          LBS → KG
+        </h2>
+
+        <input
+          id="lbsInput"
+          type="number"
+          placeholder="Enter pounds"
+          class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4"
+        >
+
+        <button
+          onclick="convertToKg()"
+          class="w-full bg-white text-black font-bold p-4 rounded-2xl"
+        >
+          Convert
+        </button>
+
+        <div
+          id="kgResult"
+          class="hidden mt-5 bg-zinc-800 p-5 rounded-2xl text-center"
+        >
+          <div class="text-zinc-400 text-sm mb-1">
+            Converted Weight
+          </div>
+
+          <div
+            id="kgOutput"
+            class="text-4xl font-bold"
+          ></div>
+        </div>
+
       </div>
 
-      <div
-        id="kgOutput"
-        class="text-4xl font-bold"
-      >
+      <!-- KG TO LBS -->
+      <div class="bg-zinc-900 p-6 rounded-3xl">
+
+        <h2 class="text-2xl font-bold mb-5">
+          KG → LBS
+        </h2>
+
+        <input
+          id="kgInput"
+          type="number"
+          placeholder="Enter kilograms"
+          class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4"
+        >
+
+        <button
+          onclick="convertToLbs()"
+          class="w-full bg-white text-black font-bold p-4 rounded-2xl"
+        >
+          Convert
+        </button>
+
+        <div
+          id="lbsResult"
+          class="hidden mt-5 bg-zinc-800 p-5 rounded-2xl text-center"
+        >
+          <div class="text-zinc-400 text-sm mb-1">
+            Converted Weight
+          </div>
+
+          <div
+            id="lbsOutput"
+            class="text-4xl font-bold"
+          ></div>
+        </div>
+
       </div>
+
+      <!-- 1RM CALCULATOR -->
+      <div class="bg-zinc-900 p-6 rounded-3xl">
+
+        <h2 class="text-2xl font-bold mb-5">
+          1 Rep Max Calculator
+        </h2>
+
+        <input
+          id="weightInput"
+          type="number"
+          placeholder="Weight lifted"
+          class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4"
+        >
+
+        <input
+          id="repsInput"
+          type="number"
+          placeholder="Reps completed"
+          class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4"
+        >
+
+        <button
+          onclick="calculate1RM()"
+          class="w-full bg-white text-black font-bold p-4 rounded-2xl"
+        >
+          Calculate
+        </button>
+
+        <div
+          id="oneRMResult"
+          class="hidden mt-5 bg-zinc-800 p-5 rounded-2xl text-center"
+        >
+          <div class="text-zinc-400 text-sm mb-1">
+            Estimated 1RM
+          </div>
+
+          <div
+            id="oneRMOutput"
+            class="text-4xl font-bold"
+          ></div>
+
+          <div
+            id="oneRMKg"
+            class="text-zinc-400 mt-2"
+          ></div>
+        </div>
+
+      </div>
+
+      <!-- RAMP UP SETS -->
+      <div class="bg-zinc-900 p-6 rounded-3xl">
+
+        <h2 class="text-2xl font-bold mb-5">
+          Ramp-Up Sets
+        </h2>
+
+        <input
+          id="rampInput"
+          type="number"
+          placeholder="Working weight"
+          class="w-full p-4 rounded-2xl bg-zinc-800 border border-zinc-700 mb-4"
+        >
+
+        <button
+          onclick="generateRampSets()"
+          class="w-full bg-white text-black font-bold p-4 rounded-2xl"
+        >
+          Generate
+        </button>
+
+        <div
+          id="rampResults"
+          class="hidden mt-5 space-y-3"
+        ></div>
+
+      </div>
+
     </div>
 
   </div>
 
   <script>
+
+    // LBS TO KG
     function convertToKg() {
+
       const lbs = document.getElementById("lbsInput").value;
 
       if (!lbs) return;
@@ -65,8 +194,109 @@
 
       document.getElementById("kgOutput").innerText = `${kg} kg`;
 
-      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("kgResult").classList.remove("hidden");
     }
+
+    // KG TO LBS
+    function convertToLbs() {
+
+      const kg = document.getElementById("kgInput").value;
+
+      if (!kg) return;
+
+      const lbs = (parseFloat(kg) * 2.20462).toFixed(1);
+
+      document.getElementById("lbsOutput").innerText = `${lbs} lbs`;
+
+      document.getElementById("lbsResult").classList.remove("hidden");
+    }
+
+    // 1RM
+    function calculate1RM() {
+
+      const weight = document.getElementById("weightInput").value;
+      const reps = document.getElementById("repsInput").value;
+
+      if (!weight || !reps) return;
+
+      const oneRM =
+        parseFloat(weight) * (1 + parseFloat(reps) / 30);
+
+      const kg =
+        (oneRM * 0.453592).toFixed(1);
+
+      document.getElementById("oneRMOutput").innerText =
+        `${oneRM.toFixed(1)} lbs`;
+
+      document.getElementById("oneRMKg").innerText =
+        `${kg} kg`;
+
+      document.getElementById("oneRMResult").classList.remove("hidden");
+    }
+
+    // RAMP UP SETS
+    function generateRampSets() {
+
+      const workingWeight =
+        parseFloat(document.getElementById("rampInput").value);
+
+      if (!workingWeight) return;
+
+      const sets = [
+        {
+          label: "Warm-Up 1",
+          percent: 0.45,
+          reps: "5"
+        },
+        {
+          label: "Warm-Up 2",
+          percent: 0.65,
+          reps: "3"
+        },
+        {
+          label: "Warm-Up 3",
+          percent: 0.82,
+          reps: "1-2"
+        }
+      ];
+
+      let html = "";
+
+      sets.forEach(set => {
+
+        const lbs =
+          Math.round((workingWeight * set.percent) / 5) * 5;
+
+        const kg =
+          (lbs * 0.453592).toFixed(1);
+
+        html += `
+          <div class="bg-zinc-800 p-4 rounded-2xl flex justify-between">
+            <div>
+              <div class="font-bold">${set.label}</div>
+              <div class="text-zinc-400 text-sm">
+                ${set.reps} reps
+              </div>
+            </div>
+
+            <div class="text-right">
+              <div class="font-bold">
+                ${lbs} lbs
+              </div>
+
+              <div class="text-zinc-400 text-sm">
+                ${kg} kg
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById("rampResults").innerHTML = html;
+
+      document.getElementById("rampResults").classList.remove("hidden");
+    }
+
   </script>
 
 </body>
