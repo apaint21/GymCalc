@@ -1,0 +1,224 @@
+export default function LiftingCalculatorApp() {
+  const [lbs, setLbs] = React.useState("")
+  const [kg, setKg] = React.useState("")
+  const [weight, setWeight] = React.useState("")
+  const [reps, setReps] = React.useState("")
+  const [oneRM, setOneRM] = React.useState("")
+  const [targetReps, setTargetReps] = React.useState("")
+  const [calculatedWeight, setCalculatedWeight] = React.useState(null)
+  const [rampWeight, setRampWeight] = React.useState("")
+  const [rampSets, setRampSets] = React.useState([])
+
+  const convertToKg = () => {
+    if (!lbs) return
+    const result = (parseFloat(lbs) * 0.453592).toFixed(2)
+    setKg(result)
+  }
+
+  const calculateOneRM = () => {
+    if (!weight || !reps) return
+
+    // Epley Formula
+    const result = parseFloat(weight) * (1 + parseFloat(reps) / 30)
+    setOneRM(result.toFixed(1))
+  }
+
+  const calculateWeightFrom1RM = () => {
+    if (!oneRM || !targetReps) return
+
+    // Reverse Epley Formula
+    const result = parseFloat(oneRM) / (1 + parseFloat(targetReps) / 30)
+    setCalculatedWeight(result.toFixed(1))
+  }
+
+  const calculateRampSets = () => {
+    if (!rampWeight) return
+
+    const workingWeight = parseFloat(rampWeight)
+
+    const sets = [
+      {
+        label: "Warm-Up 1",
+        lbs: 45,
+        kg: (45 * 0.453592).toFixed(1),
+        reps: "10"
+      },
+      {
+        label: "Warm-Up 2",
+        lbs: Math.round(workingWeight * 0.45 / 5) * 5,
+        kg: ((Math.round(workingWeight * 0.45 / 5) * 5) * 0.453592).toFixed(1),
+        reps: "5"
+      },
+      {
+        label: "Warm-Up 3",
+        lbs: Math.round(workingWeight * 0.65 / 5) * 5,
+        kg: ((Math.round(workingWeight * 0.65 / 5) * 5) * 0.453592).toFixed(1),
+        reps: "3"
+      },
+      {
+        label: "Warm-Up 4",
+        lbs: Math.round(workingWeight * 0.82 / 5) * 5,
+        kg: ((Math.round(workingWeight * 0.82 / 5) * 5) * 0.453592).toFixed(1),
+        reps: "1–2"
+      }
+    ]
+
+    setRampSets(sets)
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+      <div className="w-full max-w-3xl grid gap-6">
+
+        <div className="bg-white rounded-3xl shadow-lg p-6">
+          <h1 className="text-3xl font-bold mb-4">Weight Converter</h1>
+
+          <div className="flex flex-col gap-4">
+            <input
+              type="number"
+              placeholder="Weight in lbs"
+              value={lbs}
+              onChange={(e) => setLbs(e.target.value)}
+              className="border rounded-xl p-3"
+            />
+
+            <button
+              onClick={convertToKg}
+              className="bg-black text-white rounded-xl p-3"
+            >
+              Convert to KG
+            </button>
+
+            {kg && (
+              <div className="text-xl font-semibold">
+                {lbs} lbs = {kg} kg
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-lg p-6">
+          <h2 className="text-3xl font-bold mb-4">1 Rep Max Calculator</h2>
+
+          <div className="grid gap-4">
+            <input
+              type="number"
+              placeholder="Weight lifted"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              className="border rounded-xl p-3"
+            />
+
+            <input
+              type="number"
+              placeholder="Reps completed"
+              value={reps}
+              onChange={(e) => setReps(e.target.value)}
+              className="border rounded-xl p-3"
+            />
+
+            <button
+              onClick={calculateOneRM}
+              className="bg-black text-white rounded-xl p-3"
+            >
+              Calculate 1RM
+            </button>
+
+            {oneRM && (
+              <div className="text-xl font-semibold">
+                Estimated 1RM: {oneRM} lbs ({(oneRM * 0.453592).toFixed(1)} kg)
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-lg p-6">
+          <h2 className="text-3xl font-bold mb-4">Working Weight From 1RM</h2>
+
+          <div className="grid gap-4">
+            <input
+              type="number"
+              placeholder="Your 1RM"
+              value={oneRM}
+              onChange={(e) => setOneRM(e.target.value)}
+              className="border rounded-xl p-3"
+            />
+
+            <input
+              type="number"
+              placeholder="Target reps"
+              value={targetReps}
+              onChange={(e) => setTargetReps(e.target.value)}
+              className="border rounded-xl p-3"
+            />
+
+            <button
+              onClick={calculateWeightFrom1RM}
+              className="bg-black text-white rounded-xl p-3"
+            >
+              Calculate Working Weight
+            </button>
+
+            {calculatedWeight && (
+              <div className="text-xl font-semibold">
+                Estimated working weight for {targetReps} reps: {calculatedWeight} lbs ({(calculatedWeight * 0.453592).toFixed(1)} kg)
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-lg p-6">
+          <h2 className="text-3xl font-bold mb-4">Ramp-Up Set Calculator</h2>
+
+          <div className="grid gap-4">
+            <input
+              type="number"
+              placeholder="Working weight in lbs"
+              value={rampWeight}
+              onChange={(e) => setRampWeight(e.target.value)}
+              className="border rounded-xl p-3"
+            />
+
+            <button
+              onClick={calculateRampSets}
+              className="bg-black text-white rounded-xl p-3"
+            >
+              Generate Ramp-Up Sets
+            </button>
+
+            {rampSets.length > 0 && (
+              <div className="space-y-3">
+                {rampSets.map((set, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-100 rounded-xl p-4"
+                  >
+                    <div className="font-semibold text-lg">
+                      {set.label}
+                    </div>
+                    <div>
+                      {set.lbs} lbs ({set.kg} kg) × {set.reps} reps
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-lg p-6">
+          <h2 className="text-2xl font-bold mb-3">Formula Used</h2>
+
+          <p className="text-gray-700">
+            This app uses the Epley Formula:
+          </p>
+
+          <div className="mt-4 p-4 bg-gray-100 rounded-xl font-mono text-lg">
+            1RM = Weight × (1 + Reps / 30)
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
